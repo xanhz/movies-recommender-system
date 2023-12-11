@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    User
+    Manager
+}
+
+model User {
+    id         Int      @id @default(autoincrement())
+    email      String   @unique @db.VarChar(255)
+    fullname   String   @db.VarChar(100)
+    role       Role     @default(User)
+    avatar     String?  @db.VarChar(255)
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    movie_ratings MovieRating[]
+
+    @@map("users")
+}
+
+model Genre {
+    id   Int    @id @default(autoincrement())
+    name String @unique @db.VarChar(50)
+
+    movie_genres MovieGenre[]
+
+    @@map("genres")
+}
+
+model Movie {
+    id            Int       @id @default(autoincrement())
+    title         String    @db.VarChar(255)
+    premiere_date DateTime? @db.Date
+    link          String?   @db.VarChar(255)
+    image         String?   @db.VarChar(255)
+    summary       String?   @db.Text
+    created_at    DateTime  @default(now())
+    updated_at    DateTime  @updatedAt
+
+    movie_genres  MovieGenre[]
+    movie_ratings MovieRating[]
+
+    @@fulltext([title])
+    @@map("movies")
+}
+
+model MovieGenre {
+    movie_id Int
+    genre_id Int
+    movie    Movie? @relation(fields: [movie_id], references: [id])
+    genre    Genre? @relation(fields: [genre_id], references: [id])
+
+    @@id([movie_id, genre_id])
+    @@index([movie_id])
+    @@index([genre_id])
+    @@map("movie_genres")
+}
+
+model MovieRating {
+    user_id  Int
+    movie_id Int
+    rating   Float
+    time     DateTime
+    user     User?    @relation(fields: [user_id], references: [id])
+    movie    Movie?   @relation(fields: [movie_id], references: [id])
+
+    @@id([user_id, movie_id])
+    @@index([user_id])
+    @@index([movie_id])
+    @@map("movie_ratings")
+}

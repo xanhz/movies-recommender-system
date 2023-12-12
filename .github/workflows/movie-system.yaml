@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - movie-systems/**
+      - movie-system/**
 
 jobs:
   build:

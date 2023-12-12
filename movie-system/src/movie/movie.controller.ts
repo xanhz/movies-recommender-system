@@ -16,4 +16,10 @@ export class MovieController {
     const { id } = params;
     return this.service.findByID(id);
   }
+
+  @Get(':id/related')
+  public findRelatedMovies(@Param() params: FindMovieByIDDto) {
+    const { id } = params;
+    return this.service.findRelatedMovies(id);
+  }
 }

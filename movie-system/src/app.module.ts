@@ -46,6 +46,12 @@ import prettyStream from 'pino-pretty';
             clientSecret: config.getOrThrow<string>('GOOGLE_CLIENT_SECRET'),
             callbackURL: config.getOrThrow<string>('GOOGLE_CALLBACK_URL'),
           },
+          jwtStrategyOptions: {
+            secretOrKey: config.getOrThrow<string>('JWT_SECRET'),
+          },
+          jwtRefreshStrategyOptions: {
+            secretOrKey: config.getOrThrow<string>('JWT_SECRET'),
+          },
         };
       },
     }),

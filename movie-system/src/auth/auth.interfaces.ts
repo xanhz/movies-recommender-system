@@ -1,7 +1,9 @@
-import { GoogleStrategyOptions } from '@src/auth/strategies';
+import { GoogleStrategyOptions, JwtStrategyOptions } from '@src/auth/strategies';
 
 export interface AuthModuleOptions {
   googleStrategyOptions: GoogleStrategyOptions;
+  jwtStrategyOptions: JwtStrategyOptions;
+  jwtRefreshStrategyOptions: JwtStrategyOptions;
 }
 
 export interface AuthModuleAsyncOptions {

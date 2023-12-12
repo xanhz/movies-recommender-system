@@ -67,4 +67,31 @@ export class MovieService {
       genres: _.map(movie_genres, (e) => e.genre.name),
     };
   }
+
+  public async findRelatedMovies(id: number, limit = 10) {
+    const genreIds = await this.findMovieGenres(id);
+    if (_.isEmpty(genreIds)) {
+      return [];
+    }
+    return this.prisma.movie.findMany({
+      where: {
+        movie_genres: {
+          some: {
+            genre_id: {
+              in: genreIds,
+            },
+          },
+        },
+      },
+      take: limit,
+    });
+  }
+
+  private async findMovieGenres(id: number) {
+    const movie = await this.prisma.movie.findFirst({
+      where: { id },
+      select: { movie_genres: { select: { genre_id: true } } },
+    });
+    return movie.movie_genres.map((e) => e.genre_id);
+  }
 }

@@ -1,14 +1,15 @@
 import axios from 'axios';
 import csv from 'csvtojson/v2';
 
-export async function downloadCSVFromDrive<T = any>(url: string): Promise<T[]> {
+export async function downloadCSVFromDrive(url: string): Promise<Record<string, string>[]> {
   const fileID = url.match(/[-\w]{25,}/).pop();
-  const response = await axios.get(`https://drive.google.com/uc?id=${fileID}&export=download`, {
-    responseType: 'stream',
-  });
-  const readstream = response.data;
+  const link = `https://drive.google.com/uc?id=${fileID}&export=download`;
+
+  console.log('Downloading from %s', link);
+  const response = await axios.get(link, { responseType: 'stream' });
+
   return csv()
-    .fromStream(readstream)
+    .fromStream(response.data)
     .subscribe()
     .then((rows) => rows);
 }

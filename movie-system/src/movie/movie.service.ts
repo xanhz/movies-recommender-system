@@ -1,4 +1,6 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { SearchMoviesDto } from '@src/movie/dto';
 import { SearchMoviesQueryBuilder } from '@src/movie/query-builders';
 import { PrismaService } from '@src/prisma';
@@ -7,10 +9,12 @@ import _ from 'lodash';
 @Injectable()
 export class MovieService {
   private readonly prisma: PrismaService;
+  private readonly http: HttpService;
   private readonly logger: Logger;
 
-  constructor(prisma: PrismaService) {
+  constructor(prisma: PrismaService, http: HttpService) {
     this.prisma = prisma;
+    this.http = http;
     this.logger = new Logger(MovieService.name);
   }
 
@@ -93,5 +97,14 @@ export class MovieService {
       select: { movie_genres: { select: { genre_id: true } } },
     });
     return movie.movie_genres.map((e) => e.genre_id);
+  }
+
+  public async createMovieRating(data: Prisma.MovieRatingUncheckedCreateInput) {
+    const response = await this.http.axiosRef({
+      method: 'post',
+      url: '/movie-ratings',
+      data,
+    });
+    return response.data;
   }
 }

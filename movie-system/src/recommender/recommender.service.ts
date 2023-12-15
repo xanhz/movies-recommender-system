@@ -23,8 +23,8 @@ export class RecommenderService {
         k: nItems,
       },
     });
+    this.logger.log('Today recommendation for UserID=%d | Result=%o', user.id, response.data);
     const movieIds = response.data.map((e) => e[0]);
-
     return this.prisma.movie.findMany({
       where: {
         id: {
@@ -42,8 +42,8 @@ export class RecommenderService {
         k: nItems,
       },
     });
+    this.logger.log('Next watching recommendation for UserID=%d | Result=%o', user.id, response.data);
     const movieIds = response.data.map((e) => e[0]);
-
     return this.prisma.movie.findMany({
       where: {
         id: {

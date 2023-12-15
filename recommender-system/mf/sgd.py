@@ -116,6 +116,9 @@ class StochasticGradientDescent:
     def make_recommendation_for_user(self, user_id: int, n_items: int = 10) -> List[Tuple[int, float]]:
         ratings = self.U[user_id, :] @ self.V.T
 
+        if self.use_bias:
+            ratings += self.dataset.global_mean
+
         # Sort indices in descending order
         item_ids = np.argsort(ratings)[::-1]
         sorted_ratings = np.array(list(zip(item_ids, ratings[item_ids])))
@@ -133,6 +136,9 @@ class StochasticGradientDescent:
 
     def make_recommendation_for_item(self, item_id: int, n_users: int = 10) -> List[Tuple[int, float]]:
         ratings = self.U @ self.V[item_id, :].T
+
+        if self.use_bias:
+            ratings += self.dataset.global_mean
 
         # Sort indices in descending order
         user_ids = np.argsort(ratings)[::-1]

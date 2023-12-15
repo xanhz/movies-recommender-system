@@ -1,10 +1,16 @@
 {
   "cSpell.words": [
+    "astype",
     "datasource",
+    "dotenv",
+    "dtype",
     "fastapi",
     "fullname",
+    "ndarray",
     "nestjs",
     "pino",
+    "toarray",
+    "uvicorn",
     "zipcode"
   ]
 }

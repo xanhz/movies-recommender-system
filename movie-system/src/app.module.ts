@@ -4,6 +4,7 @@ import { AuthModule } from '@src/auth';
 import { GenreModule } from '@src/genre';
 import { MovieModule } from '@src/movie';
 import { PrismaModule } from '@src/prisma';
+import { RecommenderModule } from '@src/recommender';
 import { LoggerModule } from 'nestjs-pino';
 import prettyStream from 'pino-pretty';
 
@@ -57,6 +58,7 @@ import prettyStream from 'pino-pretty';
     }),
     MovieModule,
     GenreModule,
+    RecommenderModule,
   ],
 })
 export class AppModule {}

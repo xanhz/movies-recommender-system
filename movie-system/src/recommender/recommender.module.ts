@@ -1,8 +1,8 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { RecommenderController } from './recommender.controller';
+import { RecommenderService } from './recommender.service';
 import { ConfigService } from '@nestjs/config';
-import { MovieController } from '@src/movie/movie.controller';
-import { MovieService } from '@src/movie/movie.service';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { MovieService } from '@src/movie/movie.service';
       },
     }),
   ],
-  controllers: [MovieController],
-  providers: [MovieService],
+  providers: [RecommenderService],
+  controllers: [RecommenderController],
 })
-export class MovieModule {}
+export class RecommenderModule {}

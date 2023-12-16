@@ -1,6 +1,6 @@
-import { ChangeEvent, ReactEventHandler, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import conf from '../Config';
+import Config from '../Config';
 
 function TopBar() {
   const navigate = useNavigate();
@@ -23,8 +23,9 @@ function TopBar() {
   };
 
   const logout = () => {
-    localStorage.setItem('user', JSON.stringify({}));
-    localStorage.setItem('accessToken', '');
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     window.location.reload();
   };
 
@@ -32,7 +33,7 @@ function TopBar() {
     <>
       <div className="top-bar">
         <Link to="/" className="top-bar-logo">
-          <img src="/logo.png" alt={conf.SITE_NAME} />
+          <img src="/logo.png" alt={Config.SITE_NAME} />
         </Link>
 
         <div className="top-bar-search">

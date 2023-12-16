@@ -1,7 +1,9 @@
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from '@src/auth';
+import { CacheInterceptor } from '@src/common/interceptors';
 import { GenreModule } from '@src/genre';
 import { MovieModule } from '@src/movie';
 import { PrismaModule } from '@src/prisma';
@@ -68,6 +70,12 @@ import prettyStream from 'pino-pretty';
     MovieModule,
     GenreModule,
     RecommenderModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
   ],
 })
 export class AppModule {}

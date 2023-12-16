@@ -1,20 +1,28 @@
-import { useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Config from '../Config';
-import { isEmpty, isNil } from '../helpers/is';
-import { User } from '../interfaces/movie-system';
+import * as _ from '../helpers/is';
+import { Genre, User } from '../interfaces/movie-system';
+import { MovieSystemService } from '../services/movie-system';
 
 function TopBar() {
   const navigate = useNavigate();
 
   const [searchTitle, setSearchTitle] = useState<string>('');
   const [mobileSearch, setMobileSearch] = useState<boolean>(false);
+  const [genres, setGenres] = useState<Genre[]>([]);
 
   const user = JSON.parse(localStorage.getItem('user') ?? 'null') as User;
 
-  const submit = (event: any) => {
+  const getGenres = async () => {
+    const movieSystem = new MovieSystemService();
+    const genres = await movieSystem.getGenres();
+    setGenres(genres);
+  }
+
+  const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (isEmpty(searchTitle)) {
+    if (_.isEmpty(searchTitle)) {
       return;
     }
     navigate(`/search?title=${searchTitle}`);
@@ -27,26 +35,16 @@ function TopBar() {
     window.location.reload();
   };
 
+  useEffect(() => {
+    getGenres()
+  }, []);
+
   return (
     <>
       <div className="top-bar">
         <Link to="/" className="top-bar-logo">
           <img src="/logo.png" alt={Config.SITE_NAME} />
         </Link>
-
-        <div className="top-bar-movie-genres">
-          <form onSubmit={submit}>
-            <input
-              type="text"
-              value={searchTitle}
-              placeholder="Search"
-              onChange={e => setSearchTitle(e.target.value)}
-            />
-            <i className="fa-solid fa-search"></i>
-            <button type="submit" hidden></button>
-          </form>
-        </div>
-
 
         <div className="top-bar-search">
           <form onSubmit={submit}>
@@ -65,7 +63,7 @@ function TopBar() {
           <i className="fa-solid fa-search" onClick={() => setMobileSearch(true)}></i>
         </div>
 
-        {isNil(user) ? (
+        {!_.isNil(user) ? (
           <a onClick={logout} style={{ cursor: 'pointer' }}>
             Logout
           </a>

@@ -1,10 +1,10 @@
-import conf from '../Config';
+import Config from '../Config';
 
 function Footer() {
   return (
     <div className="footer">
       <p>
-        {new Date().getFullYear()} © {conf.SITE_NAME} ☄️
+        {new Date().getFullYear()} © {Config.SITE_NAME} ☄️
       </p>
     </div>
   );

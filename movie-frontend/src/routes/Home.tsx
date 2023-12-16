@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import CardSection from '../components/CardSection';
-import { isEmpty } from '../helpers/is';
+import * as _ from '../helpers/is';
 import { Movie, MovieWithRatingAndGenres } from '../interfaces/movie-system';
 import { MovieSystemService } from '../services/movie-system';
 import Loading from '../views/Loading';
@@ -108,9 +108,9 @@ function Home() {
           </div>
         </Link>
 
-        {!isEmpty(hotMovies) && <CardSection title="Top Rated Movies 👑" items={hotMovies} />}
-        {!isEmpty(recommendMovies) && <CardSection title="Highly recommend for you today 👑" items={recommendMovies} />}
-        {!isEmpty(watchedMovies) && <CardSection title="Watched by you 🔥" items={watchedMovies} />}
+        {!_.isEmpty(hotMovies) && <CardSection title="Top Rated Movies 👑" items={hotMovies} />}
+        {!_.isEmpty(recommendMovies) && <CardSection title="Highly recommend for you today 👑" items={recommendMovies} />}
+        {!_.isEmpty(watchedMovies) && <CardSection title="Watched by you 🔥" items={watchedMovies} />}
       </div>
     </>
   );

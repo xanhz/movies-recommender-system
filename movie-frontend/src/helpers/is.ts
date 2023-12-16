@@ -18,6 +18,13 @@ export function isObject(val: any): val is object {
   return typeof val === 'object';
 }
 
+export function isNumeric(val: any) {
+  if (isString(val)) {
+    return /^-?\d+(\.\d+)?$/.test(val);
+  }
+  return isNumber(val);
+}
+
 export function isEmpty(val: any) {
   if (isNil(val)) {
     return true;

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import YouTube from 'react-youtube';
 import CardSection from '../components/CardSection';
-import { isEmpty } from '../helpers/is';
+import * as _ from '../helpers/is';
 import { Movie as $Movie, MovieWithRatingAndGenres } from '../interfaces/movie-system';
 import { MovieSystemService } from '../services/movie-system';
 import Loading from '../views/Loading';
@@ -108,7 +108,7 @@ function Movie() {
           <p className="video-meta-desc">{data.summary}</p>
 
           <div className="video-meta-genres">
-            {!isEmpty(data.genres) &&
+            {!_.isEmpty(data.genres) &&
               data.genres.map((genre: string) => (
                 <div key={genre} className="video-meta-genre">
                   <p>{genre}</p>
@@ -116,7 +116,7 @@ function Movie() {
               ))}
           </div>
         </div>
-        {!isEmpty(nextWatching) && <CardSection title="Next watching 👍" items={nextWatching} />}
+        {!_.isEmpty(nextWatching) && <CardSection title="Next watching 👍" items={nextWatching} />}
 
         <br />
 

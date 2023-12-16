@@ -33,7 +33,7 @@ let breakpoints = {
   },
 };
 
-function CardSection({ title, items, autoplay = { delay: 5000 } }: any) {
+function CardSection({ title, items, autoplay = { delay: 2000 } }: any) {
   if (!items) {
     return null;
   }

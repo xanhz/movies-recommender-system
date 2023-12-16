@@ -1,0 +1,25 @@
+name: Deploy Movie System
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - movie-frontend/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_MOVIE_FRONTEND}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          appdir: "movie-frontend"
+          usedocker: true
+        env:
+          HD_MOVIE_SITE_NAME: ${{secrets.MOVIE_SITE_NAME}}
+          HD_MOVIE_SYSTEM_BASE_URL: ${{secrets.MOVIE_SYSTEM_BASE_URL}}
+          HD_TMDB_IMAGE_URL: ${{secrets.TMDB_IMAGE_URL}}

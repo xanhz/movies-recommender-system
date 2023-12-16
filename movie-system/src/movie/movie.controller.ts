@@ -1,4 +1,6 @@
+import { CacheTTL } from '@nestjs/cache-manager';
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { TimeMS } from '@src/common/constants';
 import { User } from '@src/common/decorators';
 import { JwtGuard } from '@src/common/guards';
 import { UserRequest } from '@src/common/interfaces';
@@ -10,17 +12,20 @@ import _ from 'lodash';
 export class MovieController {
   constructor(private readonly service: MovieService) {}
 
+  @CacheTTL(TimeMS.FiveSecond)
   @Get('')
   public search(@Query() query: SearchMoviesDto) {
     return this.service.search(query);
   }
 
+  @CacheTTL(TimeMS.FiveMinutes)
   @Get(':id')
   public findByID(@Param() params: FindMovieByIDDto) {
     const { id } = params;
     return this.service.findByID(id);
   }
 
+  @CacheTTL(TimeMS.FiveMinutes)
   @Get(':id/related')
   public findRelatedMovies(@Param() params: FindMovieByIDDto) {
     const { id } = params;

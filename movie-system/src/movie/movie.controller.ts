@@ -12,6 +12,21 @@ import _ from 'lodash';
 export class MovieController {
   constructor(private readonly service: MovieService) {}
 
+  @CacheTTL(TimeMS.ThirtyMinutes)
+  @Get('collection/hot')
+  public findHotMovies(@Query('limit') limit?: string) {
+    limit ??= '10';
+    return this.service.findHotMovies(+limit);
+  }
+
+  @UseGuards(JwtGuard)
+  @CacheTTL(TimeMS.OneMinute)
+  @Get('collection/watched')
+  public findWatchedMovies(@User('id') userID: number, @Query('limit') limit?: string) {
+    limit ??= '10';
+    return this.service.findWatchedMovies(userID, +limit);
+  }
+
   @CacheTTL(TimeMS.FiveSecond)
   @Get('')
   public search(@Query() query: SearchMoviesDto) {

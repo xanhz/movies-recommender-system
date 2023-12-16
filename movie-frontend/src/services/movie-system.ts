@@ -146,4 +146,24 @@ export class MovieSystemService {
       url: '/auth/profile',
     });
   }
+
+  public getHotMovies(k = 10) {
+    return this.sendRequest<Movie[]>({
+      method: 'get',
+      url: '/movies/collection/hot',
+      params: {
+        k,
+      },
+    });
+  }
+
+  public getWatchedMovies(k = 10) {
+    return this.sendRequest<Movie[]>({
+      method: 'get',
+      url: '/movies/collection/watched',
+      params: {
+        k,
+      },
+    });
+  }
 }

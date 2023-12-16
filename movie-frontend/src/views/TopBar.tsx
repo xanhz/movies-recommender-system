@@ -1,25 +1,23 @@
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Config from '../Config';
+import { isEmpty, isNil } from '../helpers/is';
+import { User } from '../interfaces/movie-system';
 
 function TopBar() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState<string>('');
+
+  const [searchTitle, setSearchTitle] = useState<string>('');
   const [mobileSearch, setMobileSearch] = useState<boolean>(false);
-  const [searchBy, setSearchBy] = useState<string>('title');
-  const user = JSON.parse(localStorage.getItem('user') as string);
 
-  function onChange(e: ChangeEvent<HTMLInputElement>) {
-    setSearch(e.target.value);
-  }
-
-  const onChangeSearchBy = async (event: any) => {
-    setSearchBy(event.target.value);
-  };
+  const user = JSON.parse(localStorage.getItem('user') ?? 'null') as User;
 
   const submit = (event: any) => {
     event.preventDefault();
-    navigate(`/search?searchBy=${searchBy}&q=${search}`);
+    if (isEmpty(searchTitle)) {
+      return;
+    }
+    navigate(`/search?title=${searchTitle}`);
   };
 
   const logout = () => {
@@ -36,14 +34,28 @@ function TopBar() {
           <img src="/logo.png" alt={Config.SITE_NAME} />
         </Link>
 
+        <div className="top-bar-movie-genres">
+          <form onSubmit={submit}>
+            <input
+              type="text"
+              value={searchTitle}
+              placeholder="Search"
+              onChange={e => setSearchTitle(e.target.value)}
+            />
+            <i className="fa-solid fa-search"></i>
+            <button type="submit" hidden></button>
+          </form>
+        </div>
+
+
         <div className="top-bar-search">
           <form onSubmit={submit}>
-            <select onChange={onChangeSearchBy} value={searchBy}>
-              <option value="title">Title</option>
-              <option value="genre_ids">Genre</option>
-            </select>
-            <input type="text" value={search} placeholder="Search" onChange={e => onChange(e)} />
-
+            <input
+              type="text"
+              value={searchTitle}
+              placeholder="Search"
+              onChange={e => setSearchTitle(e.target.value)}
+            />
             <i className="fa-solid fa-search"></i>
             <button type="submit" hidden></button>
           </form>
@@ -52,7 +64,8 @@ function TopBar() {
         <div className="top-bar-mobile">
           <i className="fa-solid fa-search" onClick={() => setMobileSearch(true)}></i>
         </div>
-        {user?.email ? (
+
+        {isNil(user) ? (
           <a onClick={logout} style={{ cursor: 'pointer' }}>
             Logout
           </a>
@@ -68,8 +81,12 @@ function TopBar() {
           </div>
           <form onSubmit={submit}>
             <div className="mobile-search-input">
-              <input type="text" value={search} placeholder="Search" onChange={e => onChange(e)} />
-
+              <input
+                type="text"
+                value={searchTitle}
+                placeholder="Search"
+                onChange={e => setSearchTitle(e.target.value)}
+              />
               <i className="fa-solid fa-search"></i>
             </div>
             <button type="submit" hidden></button>

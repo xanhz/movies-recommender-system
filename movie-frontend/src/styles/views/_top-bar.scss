@@ -62,7 +62,6 @@
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     border: none;
-    border-left: 1px solid #444343;
     outline: none;
     padding: 8px 32px 8px 10px;
 
@@ -157,6 +156,7 @@
 }
 
 .top-bar-mobile {
+    margin-right: 10px;
     display: none;
     margin-left: auto;
     position: relative;

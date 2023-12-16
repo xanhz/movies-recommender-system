@@ -3,16 +3,17 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import CardSection from '../components/CardSection';
+import { isEmpty } from '../helpers/is';
 import { Movie, MovieWithRatingAndGenres } from '../interfaces/movie-system';
 import { MovieSystemService } from '../services/movie-system';
 import Loading from '../views/Loading';
 
 function Home() {
   const [featured, setFeatured] = useState<MovieWithRatingAndGenres>(null as any);
-
-  const [recommendToday, setRecommendToday] = useState<Movie[]>([]);
-  const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
-  const [topMovies, setTopMovies] = useState<Movie[]>([]);
+  const [recommendMovies, setRecommendToday] = useState<Movie[]>([]);
+  const [watchedMovies, setWatchedMovies] = useState<Movie[]>([]);
+  const [hotMovies, setHotMovies] = useState<Movie[]>([]);
+  const limit = 10;
 
   async function getFeatured() {
     const movieService = new MovieSystemService();
@@ -20,12 +21,23 @@ function Home() {
     setFeatured(movie);
   }
 
+  async function getHotMovies() {
+    const movieSystem = new MovieSystemService();
+    const movies = await movieSystem.getHotMovies(limit);
+    setHotMovies(
+      movies.map(movie => ({
+        ...movie,
+        type: 'movie',
+      }))
+    );
+  }
+
   async function getRecommendToday() {
     const movieService = new MovieSystemService();
-    if (!movieService.isAuthorized()) {
-      return;
+    let movies: Movie[] = [];
+    if (movieService.isAuthorized()) {
+      movies = await movieService.getRecommendToday(limit);
     }
-    const movies = await movieService.getRecommendToday();
     setRecommendToday(
       movies.map(movie => ({
         ...movie,
@@ -34,29 +46,13 @@ function Home() {
     );
   }
 
-  async function getPopularMovies() {
-    const movieSystem = new MovieSystemService();
-    const { movies } = await movieSystem.findMovies({
-      limit: 10,
-      page: 1,
-      genre_ids: [1, 2, 3],
-    });
-    setPopularMovies(
-      movies.map(movie => ({
-        ...movie,
-        type: 'movie',
-      }))
-    );
-  }
-
-  async function getTopMovies() {
-    const movieSystem = new MovieSystemService();
-    const { movies } = await movieSystem.findMovies({
-      limit: 10,
-      page: 1,
-      genre_ids: [4, 7, 8],
-    });
-    setTopMovies(
+  async function getWatchedMovies() {
+    const movieService = new MovieSystemService();
+    let movies: Movie[] = [];
+    if (movieService.isAuthorized()) {
+      movies = await movieService.getWatchedMovies(limit);
+    }
+    setWatchedMovies(
       movies.map(movie => ({
         ...movie,
         type: 'movie',
@@ -66,9 +62,9 @@ function Home() {
 
   useEffect(() => {
     getFeatured();
+    getHotMovies();
     getRecommendToday();
-    getPopularMovies();
-    getTopMovies();
+    getWatchedMovies();
   }, []);
 
   if (!featured) {
@@ -96,12 +92,7 @@ function Home() {
             <div className="movie-hero-meta">
               <div className="movie-hero-stars">
                 <Fragment>
-                  <StarRatings
-                    rating={featured.rating.avg}
-                    starRatedColor="gold"
-                    numberOfStars={5}
-                    name="rating"
-                  />
+                  <StarRatings rating={featured.rating.avg} starRatedColor="gold" numberOfStars={5} name="rating" />
                 </Fragment>
               </div>
 
@@ -117,33 +108,9 @@ function Home() {
           </div>
         </Link>
 
-        {recommendToday && recommendToday.length > 0 && (
-          <CardSection title="Top Rated Movies 👑" items={recommendToday} />
-        )}
-
-        {!topMovies ? (
-          <div className="movie-section">
-            <p className="movie-section-title">Top Rated Movies 🔥</p>
-
-            <div className="movie-section-loading">
-              <i className="fa-solid fa-spinner-third"></i>
-            </div>
-          </div>
-        ) : (
-          <CardSection title="Top Rated Movies 🔥" items={topMovies} />
-        )}
-
-        {!popularMovies ? (
-          <div className="movie-section">
-            <p className="movie-section-title">Popular Movies 🔥</p>
-
-            <div className="movie-section-loading">
-              <i className="fa-solid fa-spinner-third"></i>
-            </div>
-          </div>
-        ) : (
-          <CardSection title="Popular Movies 🔥" items={popularMovies} />
-        )}
+        {!isEmpty(hotMovies) && <CardSection title="Top Rated Movies 👑" items={hotMovies} />}
+        {!isEmpty(recommendMovies) && <CardSection title="Highly recommend for you today 👑" items={recommendMovies} />}
+        {!isEmpty(watchedMovies) && <CardSection title="Watched by you 🔥" items={watchedMovies} />}
       </div>
     </>
   );

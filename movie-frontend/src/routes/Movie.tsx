@@ -16,7 +16,7 @@ function Movie() {
   const { id } = useParams();
 
   const [data, setData] = useState<MovieWithRatingAndGenres>(null as any);
-  const [relateMovies, setRelateMovies] = useState<$Movie[]>([]);
+  const [relatedMovies, setRelatedMovies] = useState<$Movie[]>([]);
   const [nextWatching, setNextWatching] = useState<$Movie[]>([]);
 
   const getMovie = async () => {
@@ -32,7 +32,7 @@ function Movie() {
   const getRelatedMovies = async () => {
     const movieSystem = new MovieSystemService();
     const movies = await movieSystem.findRelatedMovies(id as string);
-    setRelateMovies(movies);
+    setRelatedMovies(movies);
   };
 
   const getYoutubeId = (youTubeUrl?: string) => {
@@ -120,7 +120,7 @@ function Movie() {
 
         <br />
 
-        <CardSection title="Recommended Movies 👍" items={relateMovies} />
+        <CardSection title="Related Movies 👍" items={relatedMovies} />
       </div>
     </>
   );

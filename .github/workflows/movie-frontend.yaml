@@ -19,7 +19,11 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           appdir: "movie-frontend"
           usedocker: true
+          docker_build_args: |
+            MOVIE_SITE_NAME
+            MOVIE_SYSTEM_BASE_URL
+            TMDB_IMAGE_URL
         env:
-          HD_MOVIE_SITE_NAME: ${{secrets.MOVIE_SITE_NAME}}
-          HD_MOVIE_SYSTEM_BASE_URL: ${{secrets.MOVIE_SYSTEM_BASE_URL}}
-          HD_TMDB_IMAGE_URL: ${{secrets.TMDB_IMAGE_URL}}
+          MOVIE_SITE_NAME: ${{secrets.MOVIE_SITE_NAME}}
+          MOVIE_SYSTEM_BASE_URL: ${{secrets.MOVIE_SYSTEM_BASE_URL}}
+          TMDB_IMAGE_URL: ${{secrets.TMDB_IMAGE_URL}}

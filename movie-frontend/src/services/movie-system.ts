@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
 import Config from '../Config';
-import { isEmpty, isNil } from '../helpers/is';
-import { Movie, MovieWithRatingAndGenres, User } from '../interfaces/movie-system';
+import * as _ from '../helpers/is';
+import { Genre, Movie, MovieWithRatingAndGenres, User } from '../interfaces/movie-system';
 
 export interface SystemResponse<T = any> {
   code: number;
@@ -18,10 +18,8 @@ export interface FindMoviesResult {
 export interface FindMoviesQuery {
   genre_ids?: number[];
   title?: string;
-  fields?: string[];
   limit?: number;
   page?: number;
-  order_by?: Record<string, 'asc' | 'desc'>;
 }
 
 export class MovieSystemService {
@@ -33,7 +31,7 @@ export class MovieSystemService {
     const config: CreateAxiosDefaults = {
       baseURL: Config.MOVIE_SYSTEM_BASE_URL,
     };
-    if (!isNil(token)) {
+    if (!_.isNil(token)) {
       config.headers = {
         Authorization: `Bearer ${token}`,
       };
@@ -47,7 +45,7 @@ export class MovieSystemService {
   }
 
   public isAuthorized() {
-    return !isNil(this.token);
+    return !_.isNil(this.token);
   }
 
   public setToken(token: string) {
@@ -85,25 +83,15 @@ export class MovieSystemService {
   }
 
   public findMovies(query: FindMoviesQuery = {}) {
-    const { fields, genre_ids, order_by, title, limit = 10, page = 1 } = query;
+    const { genre_ids, title, limit = 50, page = 1 } = query;
     const vQuery = {};
-    if (!isEmpty(fields)) {
+    if (!_.isEmpty(genre_ids)) {
       // @ts-ignore
-      vQuery['fields'] = fields.join(',');
+      vQuery['genre_ids'] = genre_ids.map(id => `${id}`).join(',');
     }
-    if (!isEmpty(genre_ids)) {
-      // @ts-ignore
-      vQuery['genre_ids'] = genre_ids.map(id => id.toString()).join(',');
-    }
-    if (!isEmpty(title)) {
+    if (!_.isEmpty(title)) {
       // @ts-ignore
       vQuery['title'] = title;
-    }
-    if (!isEmpty(order_by)) {
-      // @ts-ignore
-      vQuery['order_by'] = Object.entries(order_by)
-        .map(pair => `${pair[0]}:${pair[1]}`)
-        .join(',');
     }
     return this.sendRequest<FindMoviesResult>({
       method: 'get',
@@ -164,6 +152,13 @@ export class MovieSystemService {
       params: {
         k,
       },
+    });
+  }
+
+  public getGenres() {
+    return this.sendRequest<Genre[]>({
+      method: 'get',
+      url: '/genres',
     });
   }
 }

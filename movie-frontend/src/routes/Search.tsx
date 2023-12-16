@@ -1,55 +1,89 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { isEmpty, isNil } from '../helpers/is';
+import * as _ from '../helpers/is';
 import { Movie } from '../interfaces/movie-system';
-import { MovieSystemService } from '../services/movie-system';
+import { FindMoviesQuery, MovieSystemService } from '../services/movie-system';
+import Loading from '../views/Loading';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
-  const q = searchParams.get('q');
-  const searchBy = searchParams.get('searchBy');
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<Movie[]>();
+  const [total, setTotal] = useState<number>(0);
 
-  async function getResults() {
-    const movieService = new MovieSystemService();
-    const query = {
-      page: 1,
-      limit: 20,
-    };
-    if (!isNil(searchBy) && !isEmpty(q)) {
-      // @ts-ignore
-      query[searchBy] = q;
+  const buildQuery = () => {
+    const query: FindMoviesQuery = {};
+
+    const page = searchParams.get('page');
+    if (!_.isNil(page) && _.isNumeric(page)) {
+      query['page'] = parseInt(page);
     }
-    const { movies } = await movieService.findMovies(query);
+
+    const limit = searchParams.get('limit');
+    if (!_.isNil(limit) && _.isNumeric(limit)) {
+      query['limit'] = parseInt(limit);
+    }
+
+    const title = searchParams.get('title');
+    if (!_.isNil(title) && !_.isEmpty(title)) {
+      query['title'] = title;
+    }
+
+    const genreIDs = searchParams.get('genre_ids');
+    if (!_.isNil(genreIDs)) {
+      const _genreIDs = genreIDs
+        .split(',')
+        .filter((genreID) => _.isNumeric(genreID))
+        .map((genreID) => parseInt(genreID));
+      if (!_.isEmpty(_genreIDs)) {
+        query['genre_ids'] = _genreIDs;
+      }
+    }
+    return query;
+  }
+
+  const fetchMovies = async () => {
+    const movieService = new MovieSystemService();
+    const query = buildQuery();
+    const { movies, total } = await movieService.findMovies(query);
     setMovies(movies);
+    setTotal(total);
   }
 
   useEffect(() => {
-    getResults();
-  }, [searchBy, q]);
+    fetchMovies();
+  }, []);
+
+  if (_.isNil(movies)) {
+    return <Loading />
+  }
 
   return (
     <div className="container">
-      <h2>Result for {q}</h2>
-      <div className="movie-section-row">
-        <div className="movie-section" style={{ display: 'flex' }}>
-          {movies.map((movie: any) => (
-            <Link
-              to={`/movie/${movie.id}`}
-              className="movie-card"
-              style={{
-                display: 'block',
-                background: `url(${movie.image}) no-repeat center / cover`,
-              }}
-            >
-              <div className="movie-card-content">
-                <i className="fa-solid fa-play"></i>
-
-                <p>{movie.title}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+      <h2>Found {total} movies</h2>
+      <div
+        className="movie-section"
+        style={{
+          display: 'grid',        
+          gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))',
+          gap: '10px',
+        }}
+      >
+        {movies.map((movie: any) => (
+          <Link
+            key={movie.id}
+            to={`/movie/${movie.id}`}
+            className="movie-card"
+            style={{
+              display: 'block',
+              background: `url(${movie.image}) no-repeat center / cover`,
+            }}
+          >
+            <div className="movie-card-content">
+              <i className="fa-solid fa-play"></i>
+              <p>{movie.title}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

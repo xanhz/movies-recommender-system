@@ -91,6 +91,45 @@ export class MovieService {
     });
   }
 
+  public async findHotMovies(limit = 10) {
+    const rows = await this.prisma.movieRating.groupBy({
+      by: ['movie_id'],
+      _avg: {
+        rating: true,
+      },
+      orderBy: {
+        _avg: {
+          rating: 'desc',
+        },
+      },
+      take: limit,
+    });
+    const movieIDs = rows.map((row) => row.movie_id);
+    return this.prisma.movie.findMany({
+      where: {
+        id: {
+          in: movieIDs,
+        },
+      },
+    });
+  }
+
+  public async findWatchedMovies(userID: number, limit = 10) {
+    const rows = await this.prisma.movieRating.findMany({
+      where: {
+        user_id: userID,
+      },
+      select: {
+        movie: true,
+      },
+      take: limit,
+      orderBy: {
+        time: 'desc',
+      },
+    });
+    return rows.map((row) => row.movie);
+  }
+
   private async findMovieGenres(id: number) {
     const movie = await this.prisma.movie.findFirst({
       where: { id },

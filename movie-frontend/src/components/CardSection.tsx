@@ -61,7 +61,6 @@ function CardSection({ title, items, autoplay = { delay: 5000 } }: any) {
             >
               <div className="movie-card-content">
                 <i className="fa-solid fa-play"></i>
-
                 <p>{item.title}</p>
               </div>
             </Link>

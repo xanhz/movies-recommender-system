@@ -20,7 +20,7 @@ const Login = () => {
 
         <div className="col">
           <a onClick={onClick} className="google btn">
-            <i className="fa fa-google fa-fw"></i> Login with Google+
+            <i className="fab fa-google fa-fw"></i> Login with Google+
           </a>
         </div>
       </div>

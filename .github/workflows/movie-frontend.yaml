@@ -1,4 +1,4 @@
-name: Deploy Movie System
+name: Deploy Movie Frontend
 
 on:
   push:

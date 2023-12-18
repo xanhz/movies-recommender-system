@@ -72,26 +72,11 @@ export class MovieService {
     };
   }
 
-  public async findRelatedMovies(id: number, limit = 10) {
-    const genreIds = await this.findMovieGenres(id);
-    if (_.isEmpty(genreIds)) {
-      return [];
-    }
-    return this.prisma.movie.findMany({
-      where: {
-        movie_genres: {
-          some: {
-            genre_id: {
-              in: genreIds,
-            },
-          },
-        },
-      },
-      take: limit,
-    });
+  public async getHottestMovie() {
+    return this.findByID(1);
   }
 
-  public async findHotMovies(limit = 10) {
+  public async getTopMovies(limit = 10) {
     const rows = await this.prisma.movieRating.groupBy({
       by: ['movie_id'],
       _avg: {
@@ -114,7 +99,7 @@ export class MovieService {
     });
   }
 
-  public async findWatchedMovies(userID: number, limit = 10) {
+  public async getWatchedMovies(userID: number, limit = 10) {
     const rows = await this.prisma.movieRating.findMany({
       where: {
         user_id: userID,
@@ -128,6 +113,63 @@ export class MovieService {
       },
     });
     return rows.map((row) => row.movie);
+  }
+
+  public async getRecommendMovies(userID: number, limit = 10) {
+    const response = await this.http.axiosRef<number[][]>({
+      method: 'get',
+      url: `/recommend/${userID}/movies/today`,
+      params: {
+        limit,
+      },
+    });
+    this.logger.log('Today recommendation for UserID=%d | Result=%o', userID, response.data);
+    const movieIds = response.data.map((e) => e[0]);
+    return this.prisma.movie.findMany({
+      where: {
+        id: {
+          in: movieIds,
+        },
+      },
+    });
+  }
+
+  public async getNextWatchingMovies(userID: number, limit = 10) {
+    const response = await this.http.axiosRef<number[][]>({
+      method: 'get',
+      url: `/recommend/${userID}/movies/next-watching`,
+      params: {
+        limit,
+      },
+    });
+    this.logger.log('Next watching recommendation for UserID=%d | Result=%o', userID, response.data);
+    const movieIds = response.data.map((e) => e[0]);
+    return this.prisma.movie.findMany({
+      where: {
+        id: {
+          in: movieIds,
+        },
+      },
+    });
+  }
+
+  public async findRelatedMovies(id: number, limit = 10) {
+    const genreIds = await this.findMovieGenres(id);
+    if (_.isEmpty(genreIds)) {
+      return [];
+    }
+    return this.prisma.movie.findMany({
+      where: {
+        movie_genres: {
+          some: {
+            genre_id: {
+              in: genreIds,
+            },
+          },
+        },
+      },
+      take: limit,
+    });
   }
 
   private async findMovieGenres(id: number) {

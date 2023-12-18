@@ -15,7 +15,7 @@ function Movie() {
 
   const { id } = useParams();
 
-  const [data, setData] = useState<MovieWithRatingAndGenres>(null as any);
+  const [movie, setMovie] = useState<MovieWithRatingAndGenres>(null as any);
   const [relatedMovies, setRelatedMovies] = useState<$Movie[]>([]);
   const [nextWatching, setNextWatching] = useState<$Movie[]>([]);
 
@@ -23,7 +23,7 @@ function Movie() {
     const movieSystem = new MovieSystemService();
     try {
       const movie = await movieSystem.findMovieByID(id as string);
-      setData(movie);
+      setMovie(movie);
     } catch (error) {
       return navigate('/404');
     }
@@ -31,7 +31,7 @@ function Movie() {
 
   const getRelatedMovies = async () => {
     const movieSystem = new MovieSystemService();
-    const movies = await movieSystem.findRelatedMovies(id as string);
+    const movies = await movieSystem.getRelatedMovies(id as string);
     setRelatedMovies(movies);
   };
 
@@ -60,56 +60,56 @@ function Movie() {
       return movieSystem.login();
     }
     await movieSystem.rateMovie(id as string, rating);
-    const movies = await movieSystem.getNextWatching();
+    const movies = await movieSystem.getNextWatchingMovies();
     return setNextWatching(movies);
   };
 
   useEffect(() => {
-    setData(null as any);
+    getMovie();
     getMovie();
     getRelatedMovies();
   }, [id]);
 
-  if (!data) {
+  if (_.isNil(movie)) {
     return <Loading />;
   }
 
   return (
     <>
       <Helmet>
-        <title>{data.title}</title>
+        <title>{movie.title}</title>
       </Helmet>
       <div className="container">
         <div className="video-frame">
-          <YouTube videoId={getYoutubeId(data.link)} />
+          <YouTube videoId={getYoutubeId(movie.link)} />
         </div>
 
         <div className="video-meta">
-          <p className="video-meta-title">{data.title}</p>
+          <p className="video-meta-title">{movie.title}</p>
 
           <div className="video-meta-row">
             <div className="video-meta-stars">
-              {data.rating && (
+              {movie.rating && (
                 <Fragment>
                   <StarRatings
-                    rating={data.rating.avg}
+                    rating={movie.rating.avg}
                     starRatedColor="gold"
                     changeRating={changeRating}
                     numberOfStars={5}
                     name="rating"
                   />
-                  <p>{data.rating.count} rates</p>
+                  <p>{movie.rating.count} rates</p>
                 </Fragment>
               )}
             </div>
-            {data.premiere_date && <p className="video-meta-year">{moment(data.premiere_date).format('DD/MM/YYYY')}</p>}
+            {movie.premiere_date && <p className="video-meta-year">{moment(movie.premiere_date).format('DD/MM/YYYY')}</p>}
           </div>
 
-          <p className="video-meta-desc">{data.summary}</p>
+          <p className="video-meta-desc">{movie.summary}</p>
 
           <div className="video-meta-genres">
-            {!_.isEmpty(data.genres) &&
-              data.genres.map((genre: string) => (
+            {!_.isEmpty(movie.genres) &&
+              movie.genres.map((genre: string) => (
                 <div key={genre} className="video-meta-genre">
                   <p>{genre}</p>
                 </div>

@@ -13,34 +13,52 @@ export class MovieController {
   constructor(private readonly service: MovieService) {}
 
   @CacheTTL(TimeMS.ThirtyMinutes)
-  @Get('collection/hot')
-  public findHotMovies(@Query('limit') limit?: string) {
-    limit ??= '10';
-    return this.service.findHotMovies(+limit);
+  @Get('collection/hottest')
+  public getHottestMovie() {
+    return this.service.getHottestMovie();
+  }
+
+  @CacheTTL(TimeMS.ThirtyMinutes)
+  @Get('collection/top')
+  public getTopMovies(@Query('limit') limit: string = '10') {
+    return this.service.getTopMovies(+limit);
   }
 
   @UseGuards(JwtGuard)
   @CacheTTL(TimeMS.OneMinute)
   @Get('collection/watched')
-  public findWatchedMovies(@User('id') userID: number, @Query('limit') limit?: string) {
+  public getWatchedMovies(@User('id') userID: number, @Query('limit') limit?: string) {
     limit ??= '10';
-    return this.service.findWatchedMovies(userID, +limit);
+    return this.service.getWatchedMovies(userID, +limit);
   }
 
-  @CacheTTL(TimeMS.FiveSecond)
+  @UseGuards(JwtGuard)
+  @CacheTTL(TimeMS.ThirtyMinutes)
+  @Get('collection/recommend')
+  public getRecommendMovies(@User('id') userID: number, @Query('limit') limit: string = '10') {
+    return this.service.getRecommendMovies(userID, +limit);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('collection/next-watching')
+  public getNextWatchingMovies(@User('id') userID: number, @Query('limit') limit: string = '10') {
+    return this.service.getNextWatchingMovies(userID, +limit);
+  }
+
+  @CacheTTL(TimeMS.TenMinutes)
   @Get('')
   public search(@Query() query: SearchMoviesDto) {
     return this.service.search(query);
   }
 
-  @CacheTTL(TimeMS.FiveMinutes)
+  @CacheTTL(TimeMS.TenMinutes)
   @Get(':id')
   public findByID(@Param() params: FindMovieByIDDto) {
     const { id } = params;
     return this.service.findByID(id);
   }
 
-  @CacheTTL(TimeMS.FiveMinutes)
+  @CacheTTL(TimeMS.TenMinutes)
   @Get(':id/related')
   public findRelatedMovies(@Param() params: FindMovieByIDDto) {
     const { id } = params;

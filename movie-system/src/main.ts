@@ -16,9 +16,8 @@ async function bootstrap() {
   });
 
   /**
-   * Global Middlewares
+   * Global Filters
    */
-
   const exceptionsFilter = new HttpExceptionFilter();
   app.useGlobalFilters(exceptionsFilter);
 

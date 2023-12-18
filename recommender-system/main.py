@@ -53,15 +53,15 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get('/recommend/{user_id}/movies/today')
-def recommend_today(user_id: int, k: int = 10):
-    logger.info('[APP]: Making today recommendation for user %d with %d movies', user_id, k)
-    return model.make_recommendation_for_user(user_id, k)
+def recommend_today(user_id: int, limit: int = 10):
+    logger.info('[APP]: Making today recommendation for user %d with %d movies', user_id, limit)
+    return model.make_recommendation_for_user(user_id, limit)
 
 
 @app.get('/recommend/{user_id}/movies/next-watching')
-def recommend_next_watching(user_id: int, k: int = 10):
-    logger.info('[APP]: Making next watching recommendation for user %d with %d movies', user_id, k)
-    return model.make_recommendation_for_user(user_id, k)
+def recommend_next_watching(user_id: int, limit: int = 10):
+    logger.info('[APP]: Making next watching recommendation for user %d with %d movies', user_id, limit)
+    return model.make_recommendation_for_user(user_id, limit)
 
 
 @app.post('/movie-ratings')

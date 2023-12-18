@@ -9,41 +9,31 @@ import { MovieSystemService } from '../services/movie-system';
 import Loading from '../views/Loading';
 
 function Home() {
-  const [featured, setFeatured] = useState<MovieWithRatingAndGenres>(null as any);
-  const [recommendMovies, setRecommendToday] = useState<Movie[]>([]);
+  const [hottestMovie, setHottestMovie] = useState<MovieWithRatingAndGenres>(null as any);
+  const [topMovies, setTopMovies] = useState<Movie[]>([]);
   const [watchedMovies, setWatchedMovies] = useState<Movie[]>([]);
-  const [hotMovies, setHotMovies] = useState<Movie[]>([]);
+  const [recommendMovies, setRecommendMovies] = useState<Movie[]>([]);
   const limit = 10;
 
-  async function getFeatured() {
+  const getHottestMovie = async () => {
     const movieService = new MovieSystemService();
-    const movie = await movieService.findMovieByID(1);
-    setFeatured(movie);
+    const movie = await movieService.getHottestMovie();
+    setHottestMovie(movie);
   }
 
-  async function getHotMovies() {
+  const getTopMovies = async () => {
     const movieSystem = new MovieSystemService();
-    const movies = await movieSystem.getHotMovies(limit);
-    setHotMovies(
-      movies.map(movie => ({
-        ...movie,
-        type: 'movie',
-      }))
-    );
+    const movies = await movieSystem.getTopMovies(limit);
+    setTopMovies(movies);
   }
 
-  async function getRecommendToday() {
+  async function getRecommendMovies() {
     const movieService = new MovieSystemService();
     let movies: Movie[] = [];
     if (movieService.isAuthorized()) {
-      movies = await movieService.getRecommendToday(limit);
+      movies = await movieService.getRecommendMovies(limit);
     }
-    setRecommendToday(
-      movies.map(movie => ({
-        ...movie,
-        type: 'movie',
-      }))
-    );
+    setRecommendMovies(movies);
   }
 
   async function getWatchedMovies() {
@@ -52,22 +42,17 @@ function Home() {
     if (movieService.isAuthorized()) {
       movies = await movieService.getWatchedMovies(limit);
     }
-    setWatchedMovies(
-      movies.map(movie => ({
-        ...movie,
-        type: 'movie',
-      }))
-    );
+    setWatchedMovies(movies);
   }
 
   useEffect(() => {
-    getFeatured();
-    getHotMovies();
-    getRecommendToday();
+    getHottestMovie();
+    getTopMovies();
+    getRecommendMovies();
     getWatchedMovies();
   }, []);
 
-  if (!featured) {
+  if (_.isNil(hottestMovie)) {
     return <Loading />;
   }
 
@@ -78,28 +63,28 @@ function Home() {
       </Helmet>
       <div className="container">
         <Link
-          to={`/movie/${featured.id}`}
+          to={`/movie/${hottestMovie.id}`}
           className="movie-hero"
           style={{
-            background: `url(${featured.image}) no-repeat center / cover`,
+            background: `url(${hottestMovie.image}) no-repeat center / cover`,
           }}
         >
           <div className="movie-hero-drop"></div>
 
           <div className="movie-hero-content">
-            <p className="movie-hero-title">{featured.title}</p>
+            <p className="movie-hero-title">{hottestMovie.title}</p>
 
             <div className="movie-hero-meta">
               <div className="movie-hero-stars">
                 <Fragment>
-                  <StarRatings rating={featured.rating.avg} starRatedColor="gold" numberOfStars={5} name="rating" />
+                  <StarRatings rating={hottestMovie.rating.avg} starRatedColor="gold" numberOfStars={5} name="rating" />
                 </Fragment>
               </div>
 
-              <p className="movie-hero-year">{featured.premiere_date}</p>
+              <p className="movie-hero-year">{hottestMovie.premiere_date}</p>
             </div>
 
-            <p className="movie-hero-desc">{featured.summary}</p>
+            <p className="movie-hero-desc">{hottestMovie.summary}</p>
 
             <button className="movie-hero-play">
               <i className="fa-solid fa-play"></i>
@@ -108,7 +93,7 @@ function Home() {
           </div>
         </Link>
 
-        {!_.isEmpty(hotMovies) && <CardSection title="Top Rated Movies 👑" items={hotMovies} />}
+        {!_.isEmpty(topMovies) && <CardSection title="Top Rated Movies 👑" items={topMovies} />}
         {!_.isEmpty(recommendMovies) && <CardSection title="Highly recommend for you today 👑" items={recommendMovies} />}
         {!_.isEmpty(watchedMovies) && <CardSection title="Watched by you 🔥" items={watchedMovies} />}
       </div>

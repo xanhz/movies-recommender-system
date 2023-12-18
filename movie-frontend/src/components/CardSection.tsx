@@ -53,7 +53,7 @@ function CardSection({ title, items, autoplay = { delay: 2000 } }: any) {
         {items.map((item: any) => (
           <SwiperSlide key={item.id}>
             <Link
-              to={`/movie/${item.id}`}
+              to={`/movies/${item.id}`}
               className="movie-card"
               style={{
                 background: `url(${item.image}) no-repeat center / cover`,

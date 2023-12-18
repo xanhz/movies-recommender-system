@@ -71,7 +71,7 @@ const Search = () => {
         {movies.map((movie: any) => (
           <Link
             key={movie.id}
-            to={`/movie/${movie.id}`}
+            to={`/movies/${movie.id}`}
             className="movie-card"
             style={{
               display: 'block',

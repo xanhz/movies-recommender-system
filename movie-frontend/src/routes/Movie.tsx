@@ -65,7 +65,7 @@ function Movie() {
   };
 
   useEffect(() => {
-    getMovie();
+    setMovie(null as any);
     getMovie();
     getRelatedMovies();
   }, [id]);

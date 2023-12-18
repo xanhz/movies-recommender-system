@@ -63,7 +63,7 @@ function Home() {
       </Helmet>
       <div className="container">
         <Link
-          to={`/movie/${hottestMovie.id}`}
+          to={`/movies/${hottestMovie.id}`}
           className="movie-hero"
           style={{
             background: `url(${hottestMovie.image}) no-repeat center / cover`,

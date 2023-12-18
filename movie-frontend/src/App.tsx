@@ -15,7 +15,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/movie/:id" element={<Movie />} />
+        <Route path="/movies/:id" element={<Movie />} />
         <Route path="/search" element={<Search />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/google/callback" element={<AuthCallback />} />

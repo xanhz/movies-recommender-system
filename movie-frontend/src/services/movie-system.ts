@@ -8,14 +8,14 @@ export interface SystemResponse<T = any> {
   data: T;
 }
 
-export interface FindMoviesResult {
+export interface SearchMoviesResult {
   total: number;
   limit: number;
   page: number;
   movies: Movie[];
 }
 
-export interface FindMoviesQuery {
+export interface SearchMoviesQuery {
   genre_ids?: number[];
   title?: string;
   limit?: number;
@@ -62,27 +62,54 @@ export class MovieSystemService {
     return response.data.data;
   }
 
-  public getRecommendToday(k = 10) {
+  public getHottestMovie() {
+    return this.sendRequest<MovieWithRatingAndGenres>({
+      method: 'get',
+      url: '/movies/collection/hottest',
+    })
+  }
+
+  public getTopMovies(limit = 10) {
     return this.sendRequest<Movie[]>({
       method: 'get',
-      url: '/recommender/movies/today',
+      url: '/movies/collection/top',
       params: {
-        k,
+        limit,
+      }
+    })
+  }
+
+  public getWatchedMovies(limit = 10) {
+    return this.sendRequest<Movie[]>({
+      method: 'get',
+      url: '/movies/collection/watched',
+      params: {
+        limit,
       },
     });
   }
 
-  public getNextWatching(k = 10) {
+  public getRecommendMovies(limit = 10) {
     return this.sendRequest<Movie[]>({
       method: 'get',
-      url: '/recommender/movies/next-watching',
+      url: '/movies/collection/recommend',
       params: {
-        k,
+        limit,
       },
     });
   }
 
-  public findMovies(query: FindMoviesQuery = {}) {
+  public getNextWatchingMovies(limit = 10) {
+    return this.sendRequest<Movie[]>({
+      method: 'get',
+      url: '/movies/collection/next-watching',
+      params: {
+        limit,
+      },
+    });
+  }
+
+  public searchMovies(query: SearchMoviesQuery = {}) {
     const { genre_ids, title, limit = 50, page = 1 } = query;
     const vQuery = {};
     if (!_.isEmpty(genre_ids)) {
@@ -93,7 +120,7 @@ export class MovieSystemService {
       // @ts-ignore
       vQuery['title'] = title;
     }
-    return this.sendRequest<FindMoviesResult>({
+    return this.sendRequest<SearchMoviesResult>({
       method: 'get',
       url: '/movies',
       params: {
@@ -111,7 +138,7 @@ export class MovieSystemService {
     });
   }
 
-  public findRelatedMovies(id: number | string) {
+  public getRelatedMovies(id: number | string) {
     return this.sendRequest<Movie[]>({
       method: 'get',
       url: `/movies/${id}/related`,
@@ -132,26 +159,6 @@ export class MovieSystemService {
     return this.sendRequest<User>({
       method: 'get',
       url: '/auth/profile',
-    });
-  }
-
-  public getHotMovies(k = 10) {
-    return this.sendRequest<Movie[]>({
-      method: 'get',
-      url: '/movies/collection/hot',
-      params: {
-        k,
-      },
-    });
-  }
-
-  public getWatchedMovies(k = 10) {
-    return this.sendRequest<Movie[]>({
-      method: 'get',
-      url: '/movies/collection/watched',
-      params: {
-        k,
-      },
     });
   }
 

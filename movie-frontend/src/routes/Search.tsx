@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import * as _ from '../helpers/is';
 import { Movie } from '../interfaces/movie-system';
-import { FindMoviesQuery, MovieSystemService } from '../services/movie-system';
+import { SearchMoviesQuery, MovieSystemService } from '../services/movie-system';
 import Loading from '../views/Loading';
 
 const Search = () => {
@@ -11,7 +11,7 @@ const Search = () => {
   const [total, setTotal] = useState<number>(0);
 
   const buildQuery = () => {
-    const query: FindMoviesQuery = {};
+    const query: SearchMoviesQuery = {};
 
     const page = searchParams.get('page');
     if (!_.isNil(page) && _.isNumeric(page)) {
@@ -44,7 +44,7 @@ const Search = () => {
   const fetchMovies = async () => {
     const movieService = new MovieSystemService();
     const query = buildQuery();
-    const { movies, total } = await movieService.findMovies(query);
+    const { movies, total } = await movieService.searchMovies(query);
     setMovies(movies);
     setTotal(total);
   }

@@ -1,10 +1,8 @@
-import Config from '../Config';
-
 function Footer() {
   return (
     <div className="footer">
       <p>
-        {new Date().getFullYear()} © {Config.SITE_NAME} ☄️
+        Hoang Tien Dat - B19DCCN171 © {new Date().getFullYear()} ☄️
       </p>
     </div>
   );

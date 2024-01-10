@@ -62,12 +62,12 @@ export class MovieService {
       throw new NotFoundException('Movie not found');
     }
     const { movie_ratings, movie_genres, ...rest } = movie;
+    const count = _.size(movie_ratings);
+    const avg = _.defaultTo(_.sumBy(movie_ratings, 'rating') / count, 0);
+
     return {
       ...rest,
-      rating: {
-        count: _.size(movie_ratings),
-        avg: _.sumBy(movie_ratings, 'rating') / _.size(movie_ratings),
-      },
+      rating: { count, avg },
       genres: _.map(movie_genres, (e) => e.genre.name),
     };
   }

@@ -25,6 +25,7 @@ logger = logging.get_logger()
 async def lifespan(app: FastAPI):
     logger.info('[APP]: Loading dataset...')
     dataset_path = drive.download_file(fileID=env.get('DATASET_FILE_ID'))
+
     model.dataset = Dataset.from_csv(
         filepath=dataset_path,
         user_field='UserID',
@@ -54,13 +55,15 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get('/recommend/{user_id}/movies/today')
 def recommend_today(user_id: int, limit: int = 10):
-    logger.info('[APP]: Making today recommendation for user %d with %d movies', user_id, limit)
+    logger.info(
+        '[APP]: Making today recommendation for user %d with %d movies', user_id, limit)
     return model.make_recommendation_for_user(user_id, limit)
 
 
 @app.get('/recommend/{user_id}/movies/next-watching')
 def recommend_next_watching(user_id: int, limit: int = 10):
-    logger.info('[APP]: Making next watching recommendation for user %d with %d movies', user_id, limit)
+    logger.info(
+        '[APP]: Making next watching recommendation for user %d with %d movies', user_id, limit)
     return model.make_recommendation_for_user(user_id, limit)
 
 

@@ -92,13 +92,13 @@ function Movie() {
               {movie.rating && (
                 <Fragment>
                   <StarRatings
-                    rating={movie.rating.avg}
+                    rating={movie.rating.avg ?? 0}
                     starRatedColor="gold"
                     changeRating={changeRating}
                     numberOfStars={5}
                     name="rating"
                   />
-                  <p>{movie.rating.count} rates</p>
+                  <p>{movie.rating.count ?? 0} rates</p>
                 </Fragment>
               )}
             </div>

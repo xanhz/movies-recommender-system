@@ -6,8 +6,6 @@ import { Genre, User } from '../interfaces/movie-system';
 import { MovieSystemService } from '../services/movie-system';
 
 function TopBar() {
-  const navigate = useNavigate();
-
   const [searchTitle, setSearchTitle] = useState<string>('');
   const [mobileSearch, setMobileSearch] = useState<boolean>(false);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -25,7 +23,7 @@ function TopBar() {
     if (_.isEmpty(searchTitle)) {
       return;
     }
-    navigate(`/search?title=${searchTitle}`);
+    window.location.href = `/search?title=${searchTitle}`;
   };
 
   const logout = () => {

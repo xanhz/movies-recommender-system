@@ -94,7 +94,7 @@ function Home() {
         </Link>
 
         {!_.isEmpty(topMovies) && <CardSection title="Top Rated Movies 👑" items={topMovies} />}
-        {!_.isEmpty(recommendMovies) && <CardSection title="Highly recommend for you today 👑" items={recommendMovies} />}
+        {!_.isEmpty(recommendMovies) && <CardSection title="Highly recommend for you 👑" items={recommendMovies} />}
         {!_.isEmpty(watchedMovies) && <CardSection title="Watched by you 🔥" items={watchedMovies} />}
       </div>
     </>
